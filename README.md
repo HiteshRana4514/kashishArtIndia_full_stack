@@ -197,33 +197,7 @@ Edit `src/data/blogPosts.js` to add new blog posts:
   author: "Author Name",
   date: "2024-01-25",
   image: "image-url",
-  category: "Techniques"
 }
-```
-
-### Modifying Colors
-Update the color palette in `tailwind.config.js`:
-```javascript
-colors: {
-  'kashish-blue': '#your-blue',
-  'kashish-red': '#your-red',
-  'kashish-green': '#your-green',
-}
-```
-
-### Adding Toast Notifications
-```javascript
-// In any component
-const { success, error } = useToast();
-
-const handleAction = () => {
-  try {
-    // Your logic here
-    success('Operation successful!');
-  } catch (err) {
-    error('Operation failed!');
-  }
-};
 ```
 
 ## 🌟 Current Features
