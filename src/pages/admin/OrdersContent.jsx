@@ -9,6 +9,8 @@ const OrdersContent = () => {
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const toast = useToast();
@@ -96,6 +98,31 @@ const OrdersContent = () => {
   const viewOrderDetails = (order) => {
     setSelectedOrder(order);
     setShowDetailsModal(true);
+  };
+
+  // Handle order deletion
+  const confirmDeleteOrder = (order) => {
+    setOrderToDelete(order);
+    setShowDeleteConfirmModal(true);
+  };
+
+  const handleDeleteOrder = async () => {
+    if (!orderToDelete) return;
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      await apiRequest(`/orders/${orderToDelete._id}`, 'DELETE', null, token);
+      
+      // Remove from local state
+      setOrders(orders.filter(order => order._id !== orderToDelete._id));
+      
+      toast.success(`Order has been deleted successfully`);
+      setShowDeleteConfirmModal(false);
+      setOrderToDelete(null);
+    } catch (err) {
+      console.error('Error deleting order:', err);
+      toast.error(`Failed to delete order: ${err.message || 'Unknown error'}`);
+    }
   };
   
   // Filter orders by status and search query
@@ -448,6 +475,12 @@ const OrdersContent = () => {
                               ))}
                             </div>
                           </div>
+                          <button
+                            onClick={() => confirmDeleteOrder(order)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -461,6 +494,41 @@ const OrdersContent = () => {
       
       {/* Order details modal */}
       {showDetailsModal && <OrderDetailsModal />}
+
+      {/* Delete confirmation modal */}
+      {showDeleteConfirmModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Order Deletion</h3>
+            <p className="mb-4 text-gray-600">
+              Are you sure you want to delete the order from {orderToDelete?.customer?.name || 'Unknown'}?
+              <br /><br />
+              <span className="font-medium">Painting:</span> {orderToDelete?.paintingDetails?.title || 'Unknown'}
+              <br />
+              <span className="font-medium">Order Date:</span> {orderToDelete ? new Date(orderToDelete.createdAt).toLocaleDateString() : ''}
+              <br />
+              <span className="font-medium">Status:</span> {orderToDelete?.status.charAt(0).toUpperCase() + orderToDelete?.status.slice(1)}
+            </p>
+            <div className="mt-5 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirmModal(false);
+                  setOrderToDelete(null);
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteOrder}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+              >
+                Delete Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };

@@ -405,15 +405,17 @@ export const updateOrder = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 export const deleteOrder = asyncHandler(async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    // Using findByIdAndDelete instead of findById followed by remove()
+    const deletedOrder = await Order.findByIdAndDelete(req.params.id);
     
-    if (!order) {
+    if (!deletedOrder) {
       res.status(404);
       throw new Error('Order not found');
     }
     
-    await order.remove();
-    res.json({ message: 'Order removed' });
+    // Log deletion success and return success response
+    console.log(`Order ${req.params.id} successfully deleted`);
+    res.json({ message: 'Order removed', success: true });
   } catch (error) {
     console.error('Error deleting order:', error);
     res.status(500).json({ message: 'Failed to delete order', error: error.message });

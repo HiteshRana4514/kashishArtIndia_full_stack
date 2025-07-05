@@ -29,7 +29,7 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
       setIsPublished(blog.isPublished || false);
       
       if (blog.coverImage) {
-        setImagePreview(`http://localhost:5000/uploads/blogs/${blog.coverImage}`);
+        setImagePreview(`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}`);
       }
     }
   }, [blog]);

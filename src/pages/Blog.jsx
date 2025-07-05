@@ -21,7 +21,7 @@ const Blog = () => {
         // Try direct fetch first to debug
         console.log('Fetching blogs directly...');
         try {
-          const response = await fetch('http://localhost:5000/api/blogs');
+          const response = await fetch('https://kashishartindia-full-stack.onrender.com/api/blogs');
           const data = await response.json();
           console.log('Direct API fetch response:', data);
           
@@ -95,7 +95,7 @@ const Blog = () => {
         if (!response.success) {
           console.log('Trying alternative tags API path...');
           try {
-            const altResponse = await fetch('http://localhost:5000/api/blogs/tags');
+            const altResponse = await fetch('https://kashishartindia-full-stack.onrender.com/api/blogs/tags');
             const data = await altResponse.json();
             console.log('Direct tags API fetch response:', data);
             
@@ -224,7 +224,7 @@ const Blog = () => {
                     <div className="md:w-1/2 relative">
                       <div className="relative aspect-[4/3] w-full h-full">
                         <img 
-                          src={`http://localhost:5000/uploads/blogs/${featuredBlog.coverImage}`} 
+                          src={`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${featuredBlog.coverImage}`} 
                           alt={featuredBlog.title || 'Latest blog post'} 
                           className="w-full h-full object-cover object-center absolute inset-0"
                           onError={(e) => {
@@ -310,7 +310,7 @@ const Blog = () => {
                         {blog.coverImage ? (
                           <div className="relative w-full aspect-video overflow-hidden">
                             <img
-                              src={`http://localhost:5000/uploads/blogs/${blog.coverImage}`}
+                              src={`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}`}
                               alt={blog.title}
                               className="w-full h-full object-cover object-center absolute inset-0"
                               onError={(e) => {

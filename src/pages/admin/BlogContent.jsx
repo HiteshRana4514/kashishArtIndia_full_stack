@@ -213,7 +213,7 @@ const BlogContent = () => {
                           <div className="flex-shrink-0 h-10 w-10">
                             <img 
                               className="h-10 w-10 rounded-full object-cover" 
-                              src={blog.coverImage ? `http://localhost:5000/uploads/blogs/${blog.coverImage}` : 'https://via.placeholder.com/150'} 
+                              src={blog.coverImage ? `https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}` : 'https://via.placeholder.com/150'} 
                               alt={blog.title} 
                             />
                           </div>

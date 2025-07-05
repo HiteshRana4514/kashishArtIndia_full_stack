@@ -71,7 +71,8 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// File upload middleware
+// File upload middleware - DISABLED in favor of multer
+/* 
 app.use(fileUpload({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max file size
   abortOnLimit: true,
@@ -79,6 +80,11 @@ app.use(fileUpload({
   useTempFiles: true,
   tempFileDir: '/tmp/'
 }));
+*/
+
+// Increase request body limits for larger uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

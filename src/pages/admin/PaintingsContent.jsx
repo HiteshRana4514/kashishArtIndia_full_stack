@@ -161,51 +161,101 @@ const PaintingsContent = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');      
+      const token = localStorage.getItem('adminToken');
+      
+      // Check if we have too many or too large images
+      const newImageFiles = form.images.filter(img => typeof img !== 'string');
+      if (newImageFiles.length > 0) {
+        console.log(`Uploading ${newImageFiles.length} new images`);
+        // Check total size
+        const totalSize = newImageFiles.reduce((sum, file) => sum + (file.size || 0), 0);
+        const totalSizeMB = totalSize / (1024 * 1024);
+        console.log(`Total upload size: ${totalSizeMB.toFixed(2)} MB`);
+        
+        // Warn if files might be too large
+        if (totalSizeMB > 8) {
+          const proceed = window.confirm(`Upload size is ${totalSizeMB.toFixed(2)} MB which may cause issues. Continue anyway?`);
+          if (!proceed) {
+            setLoading(false);
+            return;
+          }
+        }
+      }
+      
       const formData = new FormData();
+      
+      // First add all the text fields
       formData.append('title', form.title);
       formData.append('category', form.category);
       formData.append('medium', form.medium);
       formData.append('size', form.size);
       formData.append('price', form.price);
       formData.append('description', form.description);
-      formData.append('isAvailable', form.isAvailable);
-      formData.append('isFeatured', form.isFeatured);
+      formData.append('isAvailable', String(form.isAvailable)); // Convert to string explicitly
+      formData.append('isFeatured', String(form.isFeatured)); // Convert to string explicitly
       
-      // Handle existing and new images
+      // Handle existing and new images separately
       const existingImages = [];
-      const newImages = [];
       
-      // Separate string URLs (existing) from File objects (new uploads)
-      form.images.forEach((img) => {
+      // Process images one by one
+      for (let i = 0; i < form.images.length; i++) {
+        const img = form.images[i];
         if (typeof img === 'string') {
+          // Store existing image URLs
           existingImages.push(img);
-        } else {
-          newImages.push(img);
         }
-      });
+      }
       
       // Add existing images as JSON string
       formData.append('existingImages', JSON.stringify(existingImages));
       
-      // Add new image files
-      newImages.forEach(img => {
-        formData.append('images', img);
-      });
-      
-      let res;
-      if (editId) {
-        res = await apiRequestMultipart(`/paintings/${editId}`, 'PUT', formData, token);
-      } else {
-        res = await apiRequestMultipart('/paintings', 'POST', formData, token);
+      // Add new image files - Do this last to avoid form data issues
+      // Add each file with a unique field name to avoid conflicts
+      let fileCount = 0;
+      for (let i = 0; i < form.images.length; i++) {
+        const img = form.images[i];
+        if (typeof img !== 'string' && img instanceof File) {
+          try {
+            // Try to compress the image if it's too large (> 2MB)
+            if (img.size > 2 * 1024 * 1024 && img.type.startsWith('image/')) {
+              console.log(`Image ${img.name} is large (${(img.size / (1024 * 1024)).toFixed(2)} MB). Consider optimizing.`);
+            }
+            
+            // Use a numbered field name to ensure uniqueness
+            formData.append(`image_${fileCount}`, img, img.name);
+            fileCount++;
+          } catch (error) {
+            console.error(`Error adding file ${img.name}:`, error);
+            toast.error(`Problem with file ${img.name}`);
+          }
+        }
       }
       
-      // Refetch paintings after add/edit
-      const paintingsRes = await apiRequest('/paintings', 'GET', null, token);
-      setPaintings(paintingsRes.paintings || paintingsRes);
-      setShowModal(false);
-      toast.success(editId ? 'Painting updated successfully' : 'Painting added successfully');
+      // Add the count as a separate field
+      formData.append('fileCount', String(fileCount));
+      
+      let res;
+      try {
+        if (editId) {
+          console.log(`Updating painting ${editId} with ${fileCount} new files`);
+          res = await apiRequestMultipart(`/paintings/${editId}`, 'PUT', formData, token);
+        } else {
+          console.log(`Creating new painting with ${fileCount} files`);
+          res = await apiRequestMultipart('/paintings', 'POST', formData, token);
+        }
+        
+        // Refetch paintings after add/edit
+        const paintingsRes = await apiRequest('/paintings', 'GET', null, token);
+        setPaintings(paintingsRes.paintings || paintingsRes);
+        setShowModal(false);
+        toast.success(editId ? 'Painting updated successfully' : 'Painting added successfully');
+      } catch (uploadError) {
+        console.error('Upload failed:', uploadError);
+        toast.error(uploadError.message || 'Upload failed. Please try again with smaller files.');
+        throw uploadError; // Rethrow for the outer catch block
+      }
     } catch (err) {
+      console.error('Form submission error:', err);
       toast.error(err.message || 'Failed to save painting');
     } finally {
       setLoading(false);
