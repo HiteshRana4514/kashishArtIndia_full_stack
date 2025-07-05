@@ -32,7 +32,7 @@ const __dirname = path.dirname(__filename);
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-domain.com' 
+    ? process.env.FRONTEND_URL || '*'
     : 'http://localhost:3000',
   credentials: true
 }));
