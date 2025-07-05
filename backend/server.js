@@ -4,13 +4,17 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fileUpload from 'express-fileupload';
 
 // Import routes
 import authRoutes from './routes/auth.js';
 import paintingRoutes from './routes/paintings.js';
-import blogRoutes from './routes/blog.js';
+import blogRoutes from './routes/blogs.js';
 import orderRoutes from './routes/orders.js';
 import adminRoutes from './routes/admin.js';
+import categoryRoutes from './routes/categories.js';
+import mediaRoutes from './routes/media.js';
+import emailRoutes from './routes/email.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -29,11 +33,20 @@ const __dirname = path.dirname(__filename);
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? 'https://your-domain.com' 
-    : 'http://localhost:3001',
+    : 'http://localhost:3000',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// File upload middleware
+app.use(fileUpload({
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max file size
+  abortOnLimit: true,
+  createParentPath: true,
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}));
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -50,9 +63,12 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/paintings', paintingRoutes);
-app.use('/api/blog', blogRoutes);
+app.use('/api/blogs', blogRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/email', emailRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
@@ -82,7 +98,7 @@ const startServer = async () => {
     await connectDB();
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📱 Frontend URL: http://localhost:3001`);
+      console.log(`📱 Frontend URL: http://localhost:3000`);
       console.log(`🔧 API URL: http://localhost:${PORT}/api`);
       console.log(`🏥 Health Check: http://localhost:${PORT}/api/health`);
     });

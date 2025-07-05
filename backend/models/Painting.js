@@ -9,14 +9,14 @@ const paintingSchema = new mongoose.Schema({
   },
   artist: {
     type: String,
-    required: [true, 'Please provide an artist name'],
+    required: false,
     trim: true,
     maxlength: [50, 'Artist name cannot be more than 50 characters']
   },
   category: {
     type: String,
     required: [true, 'Please provide a category'],
-    enum: ['Landscape', 'Portrait', 'Abstract', 'Still Life', 'Modern', 'Traditional'],
+    trim: true,
     default: 'Landscape'
   },
   price: {
@@ -30,36 +30,22 @@ const paintingSchema = new mongoose.Schema({
     trim: true,
     maxlength: [1000, 'Description cannot be more than 1000 characters']
   },
-  image: {
-    type: String,
-    required: [true, 'Please provide an image URL']
+  images: {
+    type: [String],
+    required: [true, 'Please provide at least one image']
   },
-  dimensions: {
-    width: {
-      type: Number,
-      required: [true, 'Please provide width']
-    },
-    height: {
-      type: Number,
-      required: [true, 'Please provide height']
-    },
-    unit: {
-      type: String,
-      enum: ['cm', 'inches'],
-      default: 'cm'
-    }
+  size: {
+    type: String,
+    required: false
   },
   medium: {
     type: String,
-    required: [true, 'Please provide the medium'],
-    enum: ['Oil', 'Acrylic', 'Watercolor', 'Gouache', 'Mixed Media', 'Digital'],
-    default: 'Oil'
+    required: false,
+    trim: true
   },
   year: {
     type: Number,
-    required: [true, 'Please provide the year'],
-    min: [1900, 'Year must be after 1900'],
-    max: [new Date().getFullYear(), 'Year cannot be in the future']
+    required: false
   },
   isAvailable: {
     type: Boolean,
@@ -96,7 +82,7 @@ paintingSchema.virtual('formattedPrice').get(function() {
 
 // Virtual for dimensions string
 paintingSchema.virtual('dimensionsString').get(function() {
-  return `${this.dimensions.width} × ${this.dimensions.height} ${this.dimensions.unit}`;
+  return this.size || 'Dimensions not specified';
 });
 
 // Ensure virtuals are included in JSON

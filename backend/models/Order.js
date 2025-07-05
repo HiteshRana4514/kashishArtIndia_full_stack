@@ -38,12 +38,16 @@ const orderSchema = new mongoose.Schema({
     title: String,
     artist: String,
     price: Number,
-    image: String
+    image: String,
+    category: String,
+    categoryName: String,
+    medium: String,
+    dimensions: String
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'],
-    default: 'pending'
+    enum: ['new', 'pending', 'completed', 'rejected'],
+    default: 'new'
   },
   totalAmount: {
     type: Number,
@@ -94,12 +98,10 @@ orderSchema.virtual('orderNumber').get(function() {
 // Virtual for status color
 orderSchema.virtual('statusColor').get(function() {
   const colors = {
+    new: 'blue',
     pending: 'yellow',
-    confirmed: 'blue',
-    processing: 'purple',
-    shipped: 'orange',
-    delivered: 'green',
-    cancelled: 'red'
+    completed: 'green',
+    rejected: 'red'
   };
   return colors[this.status] || 'gray';
 });

@@ -7,9 +7,11 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Products from './pages/Products'
+import ProductDetail from './pages/ProductDetail'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Blog from './pages/Blog'
+import BlogDetail from './pages/BlogDetail'
 import WhatsAppButton from './components/WhatsAppButton'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -63,6 +65,19 @@ function App() {
             }
           />
           <Route
+            path="/products/:id"
+            element={
+              <>
+                <Navbar />
+                <main className="flex-grow">
+                  <ProductDetail />
+                </main>
+                <Footer />
+                <WhatsAppButton />
+              </>
+            }
+          />
+          <Route
             path="/about"
             element={
               <>
@@ -95,6 +110,17 @@ function App() {
                 <Navbar />
                 <main className="flex-grow">
                   <Blog />
+                </main>
+                <Footer />
+                <WhatsAppButton />
+              </>
+            }
+          />
+          <Route path="/blog/:slug" element={
+              <>
+                <Navbar />
+                <main className="flex-grow">
+                  <BlogDetail />
                 </main>
                 <Footer />
                 <WhatsAppButton />

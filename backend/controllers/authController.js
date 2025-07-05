@@ -116,6 +116,66 @@ export const logout = async (req, res) => {
   }
 };
 
+// @desc    Change password
+// @route   PUT /api/auth/change-password
+// @access  Private
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    
+    // Validate input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide current and new password'
+      });
+    }
+    
+    // Check password length
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    // Find user with password
+    const user = await User.findById(req.user.id).select('+password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Check if current password is correct
+    const isMatch = await user.comparePassword(currentPassword);
+    
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+};
+
 // @desc    Create admin user (for initial setup)
 // @route   POST /api/auth/setup-admin
 // @access  Public (should be protected in production)
@@ -134,7 +194,7 @@ export const setupAdmin = async (req, res) => {
     // Create admin user
     const adminUser = await User.create({
       name: 'Admin',
-      email: process.env.ADMIN_EMAIL || 'admin@example.com',
+      email: process.env.ADMIN_EMAIL || 'admin@admin.com',
       password: process.env.ADMIN_PASSWORD || 'password',
       role: 'admin'
     });

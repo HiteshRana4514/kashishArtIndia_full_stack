@@ -4,6 +4,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { motion } from 'framer-motion';
 import { useToast } from '../../components/ToastContext';
+import { apiRequest } from '../../utils/api';
 
 // Initialize AOS
 if (typeof window !== 'undefined') {
@@ -19,28 +20,30 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const { success, error: showError } = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
-    // Placeholder authentication logic
-    setTimeout(() => {
-      setLoading(false);
-      if (email === 'admin@example.com' && password === 'password') {
-        // Set authentication flag
+    try {
+      const res = await apiRequest('/auth/login', 'POST', { email, password });
+      // Only allow admin login
+      if (res.user && res.user.role === 'admin') {
         localStorage.setItem('adminLoggedIn', 'true');
-        // Show success toast
+        localStorage.setItem('adminToken', res.token);
         success('Login successful! Welcome to Admin Dashboard');
-        // Redirect to admin dashboard
         navigate('/admin-dashboard');
       } else {
-        setError('Invalid email or password');
-        // Show error toast
-        showError('Login failed. Please check your credentials.');
+        setError('Access denied: Not an admin');
+        showError('Access denied: Not an admin');
       }
-    }, 1200);
+    } catch (err) {
+      setError(err.message || 'Login failed');
+      showError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <div className="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden">

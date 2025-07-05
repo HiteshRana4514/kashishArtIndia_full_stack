@@ -1,6 +1,9 @@
 import { useState } from 'react'
+import { apiRequest } from '../utils/api'
+import { useToast } from '../components/ToastContext'
 
 const Contact = () => {
+  const toast = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -10,24 +13,51 @@ const Contact = () => {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitError(null)
+    setSubmitSuccess(false)
     
-    // Simulate form submission
-    setTimeout(() => {
-      console.log('Contact form submitted:', formData)
-      alert('Thank you for your message! We will get back to you soon.')
-      setFormData({
-        name: '',
-        email: '',
-        mobile: '',
-        subject: '',
-        message: ''
-      })
+    try {
+      // Format the data for our API
+      const contactData = {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject || 'Contact Form Inquiry',
+        message: `${formData.message}\n\nPhone: ${formData.mobile || 'Not provided'}`
+      }
+      
+      console.log('Sending contact form data to API:', contactData)
+      
+      // Send data to our backend API
+      const response = await apiRequest('/email/contact', 'POST', contactData)
+      
+      console.log('Contact form submission response:', response)
+      
+      if (response.success) {
+        setSubmitSuccess(true)
+        toast.success('Thank you for your message! We will get back to you soon.')
+        setFormData({
+          name: '',
+          email: '',
+          mobile: '',
+          subject: '',
+          message: ''
+        })
+      } else {
+        throw new Error(response.data.message || 'Failed to send message')
+      }
+    } catch (error) {
+      console.error('Contact form submission error:', error)
+      setSubmitError(error.message || 'Failed to send your message. Please try again later.')
+      toast.error('Failed to send your message. Please try again later.')
+    } finally {
       setIsSubmitting(false)
-    }, 1000)
+    }
   }
 
   const handleChange = (e) => {
@@ -64,6 +94,17 @@ const Contact = () => {
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
+              {submitSuccess && (
+                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                  Thank you for your message! We have sent you a confirmation email and will get back to you soon.
+                </div>
+              )}
+              
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                  {submitError}
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div
                   data-aos="fade-up"
@@ -163,11 +204,19 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full btn-primary py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed btn-animate"
-                data-aos="zoom-in"
-                data-aos-delay="700"
+                className={`w-full py-3 px-6 ${isSubmitting ? 'bg-gray-400' : 'bg-kashish-blue hover:bg-blue-700'} text-white rounded-lg transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center`}
+                data-aos="fade-up"
+                data-aos-delay="600"
               >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sending...
+                  </>
+                ) : 'Send Message'}
               </button>
             </form>
           </div>
