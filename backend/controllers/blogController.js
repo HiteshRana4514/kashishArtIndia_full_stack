@@ -259,16 +259,18 @@ export const updateBlog = async (req, res) => {
 // @access  Private (Admin only)
 export const deleteBlog = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
+    // Use findByIdAndDelete instead of findById followed by remove()
+    const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
     
-    if (!blog) {
+    if (!deletedBlog) {
       return res.status(404).json({
         success: false,
         message: 'Blog not found'
       });
     }
     
-    await blog.remove();
+    // Log deletion success
+    console.log(`Blog ${req.params.id} successfully deleted`);
     
     res.status(200).json({
       success: true,

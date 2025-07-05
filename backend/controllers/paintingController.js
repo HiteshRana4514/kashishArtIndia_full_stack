@@ -245,7 +245,7 @@ export const updatePainting = async (req, res) => {
       }
       
       // Set the new images list (kept existing + new uploads)
-      painting.images = [...existingImagesList, ...newImages];
+      painting.images = [...existingImagesList, ...newUploadedImages];
     }
     // If not an image update request, preserve existing images
     if (title !== undefined) painting.title = title;
