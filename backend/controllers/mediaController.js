@@ -29,7 +29,7 @@ export const getAllMedia = async (req, res) => {
         
         // Create URL
         const backendUrl = process.env.NODE_ENV === 'production'
-          ? 'https://your-production-api-url.com'
+          ? 'https://kashishartindia-full-stack.onrender.com'
           : 'http://localhost:5000';
         const url = `${backendUrl}/uploads/${filename}`;
         

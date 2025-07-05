@@ -359,7 +359,7 @@ const CategoriesContent = () => {
             let imageUrl = mediaItem.url;
             if (imageUrl && imageUrl.startsWith('/uploads/')) {
               const backendUrl = process.env.NODE_ENV === 'production'
-                ? 'https://your-production-api-url.com'
+                ? 'https://kashishartindia-full-stack.onrender.com'
                 : 'http://localhost:5000';
               imageUrl = `${backendUrl}${imageUrl}`;
             }

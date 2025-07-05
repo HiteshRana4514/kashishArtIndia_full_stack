@@ -614,7 +614,7 @@ const PaintingsContent = () => {
               // If it's a relative URL (starts with /uploads), add the backend URL
               if (url && url.startsWith('/uploads/')) {
                 const backendUrl = process.env.NODE_ENV === 'production'
-                  ? 'https://your-production-api-url.com'
+                  ? 'https://kashishartindia-full-stack.onrender.com'
                   : 'http://localhost:5000';
                 return `${backendUrl}${url}`;
               }

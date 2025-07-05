@@ -47,7 +47,7 @@ export const createCategory = async (req, res) => {
     if (req.file) {
       // Include full backend URL for image path
       const backendUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://your-production-api-url.com' 
+        ? 'https://kashishartindia-full-stack.onrender.com' 
         : 'http://localhost:5000';
       image = `${backendUrl}/uploads/${req.file.filename}`;
     }
@@ -129,7 +129,7 @@ export const updateCategory = async (req, res) => {
       
       // Set new image path
       const backendUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://your-production-api-url.com' 
+        ? 'https://kashishartindia-full-stack.onrender.com' 
         : 'http://localhost:5000';
       category.image = `${backendUrl}/uploads/${req.file.filename}`;
     } else if (imageUrl) {
@@ -140,7 +140,7 @@ export const updateCategory = async (req, res) => {
       if (imageUrl.includes('/uploads/')) {
         const pathPart = '/uploads/' + imageUrl.split('/uploads/')[1];
         const backendUrl = process.env.NODE_ENV === 'production' 
-          ? 'https://your-production-api-url.com' 
+          ? 'https://kashishartindia-full-stack.onrender.com' 
           : 'http://localhost:5000';
         category.image = `${backendUrl}${pathPart}`;
       } else {

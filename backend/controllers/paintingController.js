@@ -42,7 +42,7 @@ export const createPainting = async (req, res) => {
     // req.files is an array (from uploadMultiple)
     // Include full backend URL for image paths
     const backendUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://your-production-api-url.com' 
+      ? 'https://kashishartindia-full-stack.onrender.com' 
       : 'http://localhost:5000';
     const images = req.files ? req.files.map(file => `${backendUrl}/uploads/${file.filename}`) : [];
     if (!images.length) return res.status(400).json({ message: 'At least one image is required' });
@@ -89,7 +89,7 @@ export const updatePainting = async (req, res) => {
 
     // Handle image updates - combine existing and new images
     const backendUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://your-production-api-url.com' 
+      ? 'https://kashishartindia-full-stack.onrender.com' 
       : 'http://localhost:5000';
     
     // Only process images if they're part of this update request (existingImages is present or files uploaded)
