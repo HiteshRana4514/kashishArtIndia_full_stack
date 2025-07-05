@@ -1,5 +1,15 @@
 // Centralized API utility for backend requests
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Determine if we're in production based on hostname
+const isProduction = window.location.hostname !== 'localhost' && 
+                   window.location.hostname !== '127.0.0.1';
+
+// Use the correct API URL based on environment
+const API_BASE_URL = isProduction 
+  ? 'https://kashishartindia-full-stack.onrender.com/api'
+  : 'http://localhost:5000/api';
+  
+// Log which API URL we're using for debugging
+console.log(`Using API URL: ${API_BASE_URL} (${isProduction ? 'Production' : 'Development'} environment)`);
 
 export async function apiRequest(endpoint, method = 'GET', data = null, token = null) {
   const options = {
