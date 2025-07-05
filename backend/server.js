@@ -30,9 +30,41 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
+app.use((req, res, next) => {
+  // List of allowed origins
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://kashishartindia.com',
+    'https://www.kashishartindia.com'
+  ];
+  
+  const origin = req.headers.origin;
+  
+  // Check if the origin is in our allowed list or use environment variable
+  if (allowedOrigins.includes(origin) || origin === process.env.FRONTEND_URL) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    // Fallback to all origins in development or if not matched
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  
+  // Set other CORS headers
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
+
+// Use cors middleware as backup
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL || '*'
+    ? [process.env.FRONTEND_URL, 'https://kashishartindia.com', 'https://www.kashishartindia.com'] 
     : 'http://localhost:3000',
   credentials: true
 }));
