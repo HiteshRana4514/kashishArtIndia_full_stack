@@ -51,6 +51,7 @@ const Home = () => {
         setPaintingsLoading(true);
         const response = await apiRequest('/paintings', 'GET');
         const paintingsData = response.paintings || response;
+        console.log('paintingsData', paintingsData);
         
         // Only get paintings that are both available AND featured
         const featuredPaintings = paintingsData.filter(painting => 

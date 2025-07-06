@@ -1,6 +1,8 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -8,19 +10,49 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    // Use a clean filename approach with better uniqueness
-    const fileExtension = path.extname(file.originalname).toLowerCase();
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const safeFileName = file.fieldname + '-' + uniqueSuffix + fileExtension;
-    cb(null, safeFileName);
-  }
-});
+// Configure cloudinary if in production
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
+  // Configure Cloudinary
+  cloudinary.config({ 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET 
+  });
+  console.log('Cloudinary configured for production environment');
+}
+
+// Configure appropriate storage based on environment
+let storage;
+
+if (isProduction) {
+  // Use Cloudinary storage in production
+  storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'kashish_art_india',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+      transformation: [{ quality: 'auto' }]
+    }
+  });
+  console.log('Using Cloudinary storage for file uploads');
+} else {
+  // Use local disk storage in development
+  storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+      // Use a clean filename approach with better uniqueness
+      const fileExtension = path.extname(file.originalname).toLowerCase();
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const safeFileName = file.fieldname + '-' + uniqueSuffix + fileExtension;
+      cb(null, safeFileName);
+    }
+  });
+  console.log('Using local disk storage for file uploads');
+}
 
 // File filter
 const fileFilter = (req, file, cb) => {
@@ -48,6 +80,18 @@ const upload = multer({
 
 // Single file upload
 export const uploadSingle = upload.single('image');
+
+// Helper function to generate URL from file path in development
+const getFileUrl = (file) => {
+  if (isProduction) {
+    // In production, the file will already have secure_url property (from Cloudinary)
+    return file.path || file.location || file.secure_url;
+  } else {
+    // In development, we need to construct the URL
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+    return `${baseUrl}/${file.path.replace(/\\/g, '/')}`;
+  }
+};
 
 // Multiple files upload - support both named fields (image_0, image_1, etc) and array field (images)
 export const uploadMultiple = (req, res, next) => {
@@ -91,6 +135,11 @@ export const uploadMultiple = (req, res, next) => {
             allFiles.push(file);
           });
         }
+      });
+      
+      // Process files to add URLs
+      allFiles.forEach(file => {
+        file.url = getFileUrl(file);
       });
       
       // Store the original structure but also provide a flattened array

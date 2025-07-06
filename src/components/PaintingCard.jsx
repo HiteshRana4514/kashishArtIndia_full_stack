@@ -19,6 +19,9 @@ const PaintingCard = ({ painting, onBuyNow }) => {
   // Get the main image URL from the images array
   const imageUrl = images && images.length > 0 ? images[0] : painting.image || ''; // fallback to old format if needed
   // Handle card click to navigate to product details
+
+  console.log('imageUrl', painting);
+  
   const handleCardClick = (e) => {
     // Prevent navigation if clicking the Buy Now button
     if (e.target.closest('.btn-primary')) {
