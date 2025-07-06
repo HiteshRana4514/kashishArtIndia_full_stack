@@ -2,6 +2,11 @@ import Category from '../models/Category.js';
 import fs from 'fs';
 import path from 'path';
 
+// Helper function to check if a URL is a Cloudinary URL
+const isCloudinaryUrl = (url) => {
+  return url && (url.includes('cloudinary.com') || url.includes('res.cloudinary.com'));
+};
+
 // GET /api/categories - get all categories
 export const getCategories = async (req, res) => {
   try {
@@ -45,11 +50,21 @@ export const createCategory = async (req, res) => {
     // Handle image upload if present
     let image = null;
     if (req.file) {
-      // Include full backend URL for image path
-      const backendUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://kashishartindia-full-stack.onrender.com' 
-        : 'http://localhost:5000';
-      image = `${backendUrl}/uploads/${req.file.filename}`;
+      console.log('Category upload - file object keys:', Object.keys(req.file));
+      
+      // Check if the file has a URL provided by Cloudinary middleware
+      if (req.file.url || (req.file.path && isCloudinaryUrl(req.file.path))) {
+        // Use the Cloudinary URL directly
+        image = req.file.url || req.file.path;
+        console.log('Using Cloudinary URL for category image:', image);
+      } else {
+        // Fall back to local storage path
+        const backendUrl = process.env.NODE_ENV === 'production' 
+          ? 'https://kashishartindia-full-stack.onrender.com' 
+          : 'http://localhost:5000';
+        image = `${backendUrl}/uploads/${req.file.filename}`;
+        console.log('Using local storage for category image:', image);
+      }
     }
     
     const category = new Category({
@@ -110,9 +125,11 @@ export const updateCategory = async (req, res) => {
     
     // Handle image based on form flags
     if (req.file) {
+      console.log('Category update - file object keys:', Object.keys(req.file));
+      
       // New file uploaded - replace the existing one
-      // Delete old image if exists
-      if (category.image) {
+      // Delete old image if exists and it's a local file (not Cloudinary)
+      if (category.image && !isCloudinaryUrl(category.image)) {
         try {
           // Extract filename from URL
           const oldImagePath = category.image.split('/uploads/')[1];
@@ -120,6 +137,7 @@ export const updateCategory = async (req, res) => {
             const filePath = path.join(process.cwd(), 'uploads', oldImagePath);
             if (fs.existsSync(filePath)) {
               fs.unlinkSync(filePath);
+              console.log('Deleted old category image from local storage');
             }
           }
         } catch (error) {
@@ -127,39 +145,60 @@ export const updateCategory = async (req, res) => {
         }
       }
       
-      // Set new image path
-      const backendUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://kashishartindia-full-stack.onrender.com' 
-        : 'http://localhost:5000';
-      category.image = `${backendUrl}/uploads/${req.file.filename}`;
+      // Check if the file has a URL provided by Cloudinary middleware
+      if (req.file.url || (req.file.path && isCloudinaryUrl(req.file.path))) {
+        // Use the Cloudinary URL directly
+        category.image = req.file.url || req.file.path;
+        console.log('Using Cloudinary URL for updated category image:', category.image);
+      } else {
+        // Fall back to local storage path
+        const backendUrl = process.env.NODE_ENV === 'production' 
+          ? 'https://kashishartindia-full-stack.onrender.com' 
+          : 'http://localhost:5000';
+        category.image = `${backendUrl}/uploads/${req.file.filename}`;
+        console.log('Using local storage for updated category image:', category.image);
+      }
     } else if (imageUrl) {
       // Image selected from the gallery or existing URL
       console.log('Processing image URL:', imageUrl);
       
-      // Extract the path portion if it's a full URL
-      if (imageUrl.includes('/uploads/')) {
+      // If it's a Cloudinary URL, use it directly
+      if (isCloudinaryUrl(imageUrl)) {
+        category.image = imageUrl;
+        console.log('Using existing Cloudinary URL:', category.image);
+      }
+      // Extract the path portion if it's a full URL with /uploads/
+      else if (imageUrl.includes('/uploads/')) {
         const pathPart = '/uploads/' + imageUrl.split('/uploads/')[1];
         const backendUrl = process.env.NODE_ENV === 'production' 
           ? 'https://kashishartindia-full-stack.onrender.com' 
           : 'http://localhost:5000';
         category.image = `${backendUrl}${pathPart}`;
+        console.log('Using backend URL with path:', category.image);
       } else {
         category.image = imageUrl;
+        console.log('Using provided image URL:', category.image);
       }
       console.log('Set category image:', category.image);
     } else if (removeImage === 'true' && category.image) {
       // User wants to remove the image
       try {
-        // Delete the image file
-        const oldImagePath = category.image.split('/uploads/')[1];
-        if (oldImagePath) {
-          const filePath = path.join(process.cwd(), 'uploads', oldImagePath);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+        // Only attempt to delete if it's a local file (not Cloudinary)
+        if (!isCloudinaryUrl(category.image)) {
+          const oldImagePath = category.image.split('/uploads/')[1];
+          if (oldImagePath) {
+            const filePath = path.join(process.cwd(), 'uploads', oldImagePath);
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+              console.log('Deleted category image from local storage');
+            }
           }
+        } else {
+          console.log('Not deleting Cloudinary image file (handled by Cloudinary)');
         }
         // Clear the image field
         category.image = null;
+        console.log('Removed category image reference');
       } catch (error) {
         console.error('Error removing image:', error);
       }
@@ -191,8 +230,8 @@ export const deleteCategory = async (req, res) => {
     const category = await Category.findById(req.params.id);
     if (!category) return res.status(404).json({ message: 'Category not found' });
     
-    // Delete image file if it exists
-    if (category.image) {
+    // Delete image file if it exists and it's a local file (not Cloudinary)
+    if (category.image && !isCloudinaryUrl(category.image)) {
       try {
         // Extract filename from URL
         const imagePath = category.image.split('/uploads/')[1];
@@ -200,11 +239,14 @@ export const deleteCategory = async (req, res) => {
           const filePath = path.join(process.cwd(), 'uploads', imagePath);
           if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
+            console.log('Deleted category image file during category deletion');
           }
         }
       } catch (error) {
         console.error('Error deleting image file:', error);
       }
+    } else if (category.image) {
+      console.log('Not deleting Cloudinary image (handled by Cloudinary)');
     }
     
     await category.deleteOne();

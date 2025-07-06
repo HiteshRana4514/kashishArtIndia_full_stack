@@ -380,19 +380,19 @@ const PaintingsContent = () => {
           </button>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto divide-y divide-gray-200">
+      <div className="overflow-x-auto w-full" style={{maxWidth: '100%'}}>
+        <table className="min-w-full table-auto divide-y divide-gray-200" style={{minWidth: '1100px'}}>
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Medium</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Size</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price (₹)</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Featured</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '10%'}}>Image</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '15%'}}>Title</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '10%'}}>Category</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '10%'}}>Medium</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '10%'}}>Size</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '10%'}}>Price (₹)</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '10%'}}>Status</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '10%'}}>Featured</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap" style={{width: '15%'}}>Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">

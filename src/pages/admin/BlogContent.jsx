@@ -187,20 +187,20 @@ const BlogContent = () => {
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+            <div className="overflow-x-auto w-full" style={{maxWidth: '100%'}}>
+              <table className="min-w-full divide-y divide-gray-200 table-fixed" style={{minWidth: '800px'}}>
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{width: '30%'}}>
                       Title
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{width: '25%'}}>
                       Status
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{width: '25%'}}>
                       Created
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{width: '20%'}}>
                       Actions
                     </th>
                   </tr>
@@ -213,7 +213,7 @@ const BlogContent = () => {
                           <div className="flex-shrink-0 h-10 w-10">
                             <img 
                               className="h-10 w-10 rounded-full object-cover" 
-                              src={blog.coverImage ? `https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}` : 'https://via.placeholder.com/150'} 
+                              src={blog.coverImage ? blog.coverImage : 'https://via.placeholder.com/150'} 
                               alt={blog.title} 
                             />
                           </div>

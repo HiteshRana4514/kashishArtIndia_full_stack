@@ -4,6 +4,7 @@ import { useToast } from './ToastContext';
 import { apiRequest, apiRequestMultipart } from '../utils/api';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import MediaGalleryModal from './MediaGalleryModal';
 
 const BlogEditorModal = ({ blog, onClose, onSave }) => {
   const [title, setTitle] = useState('');
@@ -15,6 +16,8 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showMediaGallery, setShowMediaGallery] = useState(false);
+  const [isCloudinaryImage, setIsCloudinaryImage] = useState(false);
   const toast = useToast();
   
   const isEdit = !!blog;
@@ -29,7 +32,11 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
       setIsPublished(blog.isPublished || false);
       
       if (blog.coverImage) {
-        setImagePreview(`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}`);
+        setImagePreview(blog.coverImage);
+        // Check if it's a Cloudinary URL
+        if (blog.coverImage.includes('cloudinary.com')) {
+          setIsCloudinaryImage(true);
+        }
       }
     }
   }, [blog]);
@@ -63,6 +70,7 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
     }
     
     setCoverImage(file);
+    setIsCloudinaryImage(false); // Reset the flag as we're using a file upload
     
     // Create preview
     const reader = new FileReader();
@@ -70,6 +78,17 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
       setImagePreview(reader.result);
     };
     reader.readAsDataURL(file);
+  };
+  
+  // Handle image selection from Media Gallery
+  const handleMediaSelect = (media) => {
+    console.log('Selected media from gallery:', media);
+    // Store the Cloudinary URL
+    setImagePreview(media.url);
+    setCoverImage(media.url); // Store URL instead of file
+    setIsCloudinaryImage(true);
+    setShowMediaGallery(false);
+    toast.success('Image selected from gallery');
   };
   
   const handleSubmit = async (e) => {
@@ -102,7 +121,15 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
       formData.append('isPublished', isPublished);
       
       if (coverImage) {
-        formData.append('coverImage', coverImage);
+        if (isCloudinaryImage) {
+          // For Cloudinary images, just send the URL as a string
+          formData.append('cloudinaryCoverImage', coverImage);
+          console.log('Sending Cloudinary URL:', coverImage);
+        } else {
+          // For new file uploads, send the actual file
+          formData.append('coverImage', coverImage);
+          console.log('Sending file upload');
+        }
       }
       
       let response;
@@ -341,6 +368,15 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
           </div>
         </motion.div>
       </div>
+      
+      {/* Media Gallery Modal */}
+      {showMediaGallery && (
+        <MediaGalleryModal 
+          onClose={() => setShowMediaGallery(false)} 
+          onSelect={handleMediaSelect}
+          maxSelect={1} 
+        />
+      )}
     </div>
   );
 };

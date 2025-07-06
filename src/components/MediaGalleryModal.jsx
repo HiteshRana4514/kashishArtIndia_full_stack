@@ -10,14 +10,25 @@ const MediaGalleryModal = ({ onClose, onSelect, maxSelect = 1 }) => {
   const [filter, setFilter] = useState('all');
   const toast = useToast();
 
-  // Fetch media files from the backend
+  // Fetch media files from Cloudinary
   useEffect(() => {
     const fetchMedia = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('adminToken');
-        const response = await apiRequest('/media', 'GET', null, token);
-        setMediaFiles(response.media || []);
+        
+        // Use the new Cloudinary media endpoint instead of local media
+        const response = await apiRequest('/cloudinary-media', 'GET', null, token);
+        
+        if (response.media && response.media.length > 0) {
+          console.log('Fetched Cloudinary media:', response.media.length, 'items');
+          setMediaFiles(response.media);
+        } else {
+          console.log('No Cloudinary media found, falling back to local media');
+          // Fallback to local media if no Cloudinary media
+          const localResponse = await apiRequest('/media', 'GET', null, token);
+          setMediaFiles(localResponse.media || []);
+        }
       } catch (error) {
         toast.error('Failed to load media gallery');
         console.error('Error fetching media:', error);

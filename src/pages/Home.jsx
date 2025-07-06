@@ -385,7 +385,7 @@ const Home = () => {
                     {blog.coverImage ? (
                       <div className="relative w-full aspect-video overflow-hidden">
                         <img 
-                          src={`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}`} 
+                          src={blog.coverImage} 
                           alt={blog.title} 
                           className="w-full h-full object-cover object-center absolute inset-0"
                           onError={(e) => {

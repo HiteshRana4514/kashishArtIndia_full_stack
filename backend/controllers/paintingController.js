@@ -26,6 +26,17 @@ export const getPaintingById = async (req, res) => {
 // POST /api/paintings - create painting (with multiple image upload)
 export const createPainting = async (req, res) => {
   try {
+    // Debug received files
+    console.log('DEBUG - Files received:', {
+      hasAllFiles: !!req.allFiles,
+      allFilesLength: req.allFiles ? req.allFiles.length : 0,
+      hasFiles: !!req.files,
+      filesType: req.files ? (Array.isArray(req.files) ? 'array' : 'object') : 'none',
+      filesLength: req.files ? (Array.isArray(req.files) ? req.files.length : Object.keys(req.files).length) : 0,
+      hasSingleFile: !!req.file,
+      fileFields: req.files && typeof req.files === 'object' ? Object.keys(req.files) : [],
+      body: req.body
+    });
     console.log('Creating painting with body:', Object.keys(req.body));
     
     const {
@@ -54,12 +65,28 @@ export const createPainting = async (req, res) => {
     // First check if we have the flattened files array from our custom middleware
     if (req.allFiles && Array.isArray(req.allFiles) && req.allFiles.length > 0) {
       console.log(`Using flattened allFiles array with ${req.allFiles.length} files`);
-      images.push(...req.allFiles.map(file => `${backendUrl}/uploads/${file.filename}`));
+      // Use the URL from the middleware if available, otherwise construct it
+      images.push(...req.allFiles.map(file => {
+        // Use the URL that was set by the upload middleware if available
+        if (file.url) {
+          console.log(`Using middleware-provided URL: ${file.url}`);
+          return file.url;
+        }
+        // Fallback to constructed URL
+        return `${backendUrl}/uploads/${file.filename}`;
+      }));
     }
     // Legacy approach - direct array from multer upload.array
     else if (req.files && Array.isArray(req.files) && req.files.length > 0) {
       console.log(`Using array files with ${req.files.length} files`);
-      images.push(...req.files.map(file => `${backendUrl}/uploads/${file.filename}`));
+      images.push(...req.files.map(file => {
+        // Use the URL that was set by the upload middleware if available
+        if (file.url) {
+          return file.url;
+        }
+        // Fallback to constructed URL
+        return `${backendUrl}/uploads/${file.filename}`;
+      }));
     }
     // Fields approach - from multer upload.fields
     else if (req.files && typeof req.files === 'object' && Object.keys(req.files).length > 0) {
@@ -70,7 +97,13 @@ export const createPainting = async (req, res) => {
         if (Array.isArray(filesInField)) {
           filesInField.forEach(file => {
             console.log(`Processing file ${file.originalname} (${file.size} bytes) from ${fieldName}`);
-            images.push(`${backendUrl}/uploads/${file.filename}`);
+            // Use the URL that was set by the upload middleware if available
+            if (file.url) {
+              console.log(`Using middleware-provided URL: ${file.url}`);
+              images.push(file.url);
+            } else {
+              images.push(`${backendUrl}/uploads/${file.filename}`);
+            }
           });
         }
       }
@@ -78,7 +111,13 @@ export const createPainting = async (req, res) => {
     // Single file case
     else if (req.file) {
       console.log(`Using single file: ${req.file.originalname}`);
-      images.push(`${backendUrl}/uploads/${req.file.filename}`);
+      // Use the URL that was set by the upload middleware if available
+      if (req.file.url) {
+        console.log(`Using middleware-provided URL: ${req.file.url}`);
+        images.push(req.file.url);
+      } else {
+        images.push(`${backendUrl}/uploads/${req.file.filename}`);
+      }
     }
     
     console.log(`Processed ${images.length} images for new painting`);
@@ -130,6 +169,34 @@ export const updatePainting = async (req, res) => {
       (Array.isArray(req.files) ? req.files.length : Object.keys(req.files).length) : 
       (req.file ? 1 : 0));
     
+    // For toggle operations, we need to be extra careful to preserve the existing images
+    // First, check if this is just a simple field update (like toggling availability)
+    const isSimpleFieldUpdate = 
+      Object.keys(req.body).length === 1 && 
+      (req.body.hasOwnProperty('isAvailable') || req.body.hasOwnProperty('isFeatured')) &&
+      !req.files && 
+      !req.file;
+
+    // For simple field updates, use findByIdAndUpdate to avoid touching other fields
+    if (isSimpleFieldUpdate) {
+      console.log('Performing simple field update - preserving all other fields');
+      const updatedField = req.body.hasOwnProperty('isAvailable') ? 'isAvailable' : 'isFeatured';
+      const updatedValue = req.body[updatedField] === 'true' || req.body[updatedField] === true;
+      
+      const updatedPainting = await Painting.findByIdAndUpdate(
+        req.params.id, 
+        { [updatedField]: updatedValue },
+        { new: true, runValidators: true }
+      );
+      
+      if (!updatedPainting) return res.status(404).json({ message: 'Painting not found' });
+      
+      console.log(`Updated ${updatedField} to ${updatedValue}`);
+      console.log('Image count preserved:', updatedPainting.images?.length || 0);
+      return res.json(updatedPainting);
+    }
+    
+    // For more complex updates, proceed with the full update logic
     const painting = await Painting.findById(req.params.id);
     if (!painting) return res.status(404).json({ message: 'Painting not found' });
     
@@ -172,34 +239,61 @@ export const updatePainting = async (req, res) => {
     // Extract all new images using the same approach as createPainting
     const newUploadedImages = [];
     
-    // First check if we have the flattened files array from our custom middleware
-    if (req.allFiles && Array.isArray(req.allFiles) && req.allFiles.length > 0) {
-      console.log(`Using flattened allFiles array with ${req.allFiles.length} files`);
-      newUploadedImages.push(...req.allFiles.map(file => `${backendUrl}/uploads/${file.filename}`));
-    }
-    // Legacy approach - direct array from multer upload.array
-    else if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-      console.log(`Using array files with ${req.files.length} files`);
-      newUploadedImages.push(...req.files.map(file => `${backendUrl}/uploads/${file.filename}`));
-    }
-    // Fields approach - from multer upload.fields
-    else if (req.files && typeof req.files === 'object' && Object.keys(req.files).length > 0) {
-      console.log(`Using fields object with keys: ${Object.keys(req.files)}`);
+    // Check if we have new files to add
+    if (req.files) {
+      console.log(`Files received: ${typeof req.files === 'object' ? Object.keys(req.files).length : req.files.length}`);
       
-      for (const fieldName in req.files) {
-        const filesInField = req.files[fieldName];
-        if (Array.isArray(filesInField)) {
-          filesInField.forEach(file => {
-            console.log(`Processing file ${file.originalname} (${file.size} bytes) from ${fieldName}`);
+      // First check if we have the flattened files array from our custom middleware
+      if (req.allFiles && Array.isArray(req.allFiles)) {
+        req.allFiles.forEach(file => {
+          // Use the URL that was set by the upload middleware if available
+          if (file.url) {
+            console.log(`Using middleware-provided URL: ${file.url}`);
+            newUploadedImages.push(file.url);
+          } else {
             newUploadedImages.push(`${backendUrl}/uploads/${file.filename}`);
-          });
+          }
+        });
+      }
+      // Legacy approach - direct array from multer upload.array
+      else if (Array.isArray(req.files)) {
+        req.files.forEach(file => {
+          // Use the URL that was set by the upload middleware if available
+          if (file.url) {
+            console.log(`Using middleware-provided URL: ${file.url}`);
+            newUploadedImages.push(file.url);
+          } else {
+            newUploadedImages.push(`${backendUrl}/uploads/${file.filename}`);
+          }
+        });
+      }
+      // Fields approach - from multer upload.fields
+      else {
+        for (const fieldName in req.files) {
+          const filesInField = req.files[fieldName];
+          if (Array.isArray(filesInField)) {
+            filesInField.forEach(file => {
+              // Use the URL that was set by the upload middleware if available
+              if (file.url) {
+                console.log(`Using middleware-provided URL: ${file.url}`);
+                newUploadedImages.push(file.url);
+              } else {
+                newUploadedImages.push(`${backendUrl}/uploads/${file.filename}`);
+              }
+            });
+          }
         }
       }
     }
     // Single file case
     else if (req.file) {
-      console.log(`Using single file: ${req.file.originalname}`);
-      newUploadedImages.push(`${backendUrl}/uploads/${req.file.filename}`);
+      // Use the URL that was set by the upload middleware if available
+      if (req.file.url) {
+        console.log(`Using middleware-provided URL: ${req.file.url}`);
+        newUploadedImages.push(req.file.url);
+      } else {
+        newUploadedImages.push(`${backendUrl}/uploads/${req.file.filename}`);
+      }
     }
     
     console.log(`Added ${newUploadedImages.length} new images`);
@@ -208,10 +302,12 @@ export const updatePainting = async (req, res) => {
     painting.images = [...existingImagesList, ...newUploadedImages];
     console.log(`Total images after update: ${painting.images.length}`);
     
-    // Only process images if they're part of this update request (existingImages is present or files uploaded)
-    const isImageUpdateRequest = existingImages !== undefined || newUploadedImages.length > 0;
+    // Check if this is an explicit image update request
+    const isExplicitImageUpdate = existingImages !== undefined || newUploadedImages.length > 0;
     
-    if (isImageUpdateRequest) {
+    // Important: Even for non-image updates, we need to handle images to preserve them
+    // Only process image deletion if it's an explicit image update
+    if (isExplicitImageUpdate) {
       // Find images that need to be deleted (in old images but not in existingImagesList)
       const imagesToDelete = painting.images.filter(oldImg => 
         !existingImagesList.includes(oldImg)
@@ -246,8 +342,19 @@ export const updatePainting = async (req, res) => {
       
       // Set the new images list (kept existing + new uploads)
       painting.images = [...existingImagesList, ...newUploadedImages];
+      
+      // Debug the final images array
+      console.log('FINAL IMAGES (explicit update):', {
+        existingCount: existingImagesList.length,
+        newCount: newUploadedImages.length,
+        finalCount: painting.images.length,
+        finalImages: painting.images
+      });
+    } else {
+      // For non-explicit image updates (like toggling availability), preserve existing images
+      // This is critical - DO NOT overwrite the images array
+      console.log('Preserving existing images during partial update:', painting.images.length);
     }
-    // If not an image update request, preserve existing images
     if (title !== undefined) painting.title = title;
     if (artist !== undefined) painting.artist = artist;
     if (category !== undefined) painting.category = category;

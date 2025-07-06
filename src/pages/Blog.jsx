@@ -224,7 +224,7 @@ const Blog = () => {
                     <div className="md:w-1/2 relative">
                       <div className="relative aspect-[4/3] w-full h-full">
                         <img 
-                          src={`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${featuredBlog.coverImage}`} 
+                          src={featuredBlog.coverImage} 
                           alt={featuredBlog.title || 'Latest blog post'} 
                           className="w-full h-full object-cover object-center absolute inset-0"
                           onError={(e) => {
@@ -310,7 +310,7 @@ const Blog = () => {
                         {blog.coverImage ? (
                           <div className="relative w-full aspect-video overflow-hidden">
                             <img
-                              src={`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}`}
+                              src={blog.coverImage}
                               alt={blog.title}
                               className="w-full h-full object-cover object-center absolute inset-0"
                               onError={(e) => {

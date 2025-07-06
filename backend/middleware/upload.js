@@ -10,24 +10,24 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure cloudinary if in production
-const isProduction = process.env.NODE_ENV === 'production';
+// DIRECT CLOUDINARY CONFIG - Using hardcoded values for testing
+// These are the values from your config.env file
+cloudinary.config({
+  cloud_name: 'dhshyzyak', 
+  api_key: '115818884815146', 
+  api_secret: '-2zVDEoj9RlfaEL0rcronT7POGE'
+});
 
-if (isProduction) {
-  // Configure Cloudinary
-  cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_API_SECRET 
-  });
-  console.log('Cloudinary configured for production environment');
-}
+console.log('Cloudinary configured with direct values');
 
-// Configure appropriate storage based on environment
+// Always use production mode for testing
+const forceProduction = true;
+
+// DIRECT STORAGE CONFIG - Always use Cloudinary storage
 let storage;
 
-if (isProduction) {
-  // Use Cloudinary storage in production
+// Use Cloudinary storage directly
+try {
   storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
@@ -36,22 +36,19 @@ if (isProduction) {
       transformation: [{ quality: 'auto' }]
     }
   });
-  console.log('Using Cloudinary storage for file uploads');
-} else {
-  // Use local disk storage in development
+  console.log('Successfully configured Cloudinary storage for uploads');
+} catch (error) {
+  console.error('ERROR SETTING UP CLOUDINARY STORAGE:', error);
+  // Fall back to disk storage if Cloudinary setup fails
   storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
-      // Use a clean filename approach with better uniqueness
-      const fileExtension = path.extname(file.originalname).toLowerCase();
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      const safeFileName = file.fieldname + '-' + uniqueSuffix + fileExtension;
-      cb(null, safeFileName);
+      cb(null, `${Date.now()}-${file.originalname}`);
     }
   });
-  console.log('Using local disk storage for file uploads');
+  console.log('Falling back to local disk storage due to Cloudinary error');
 }
 
 // File filter
@@ -70,9 +67,9 @@ const upload = multer({
   limits: {
     fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024, // Increased to 10MB default
     fieldSize: 20 * 1024 * 1024, // 20MB field size limit
-    fields: 20,               // Maximum number of non-file fields
-    files: 5,                 // Maximum number of file fields
-    parts: 30                 // Maximum number of parts (fields + files)
+    fields: 50,               // Maximum number of non-file fields
+    files: 20,                // Maximum number of file fields
+    parts: 100                // Maximum number of parts (fields + files)
   },
   fileFilter: fileFilter,
   preservePath: false        // Don't preserve the full path of files
@@ -81,17 +78,80 @@ const upload = multer({
 // Single file upload
 export const uploadSingle = upload.single('image');
 
-// Helper function to generate URL from file path in development
-const getFileUrl = (file) => {
-  if (isProduction) {
-    // In production, the file will already have secure_url property (from Cloudinary)
-    return file.path || file.location || file.secure_url;
-  } else {
-    // In development, we need to construct the URL
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
-    return `${baseUrl}/${file.path.replace(/\\/g, '/')}`;
-  }
+// Blog cover image upload (more permissive)
+export const uploadBlogCover = (req, res, next) => {
+  console.log('Blog upload middleware - starting');
+  console.log('Request body keys before upload:', Object.keys(req.body || {}));
+  console.log('Request has files object:', !!req.files);
+  
+  // Use any() to accept any field name for maximum compatibility
+  upload.any()(req, res, (err) => {
+    if (err) {
+      console.error('Blog upload middleware error:', err);
+      return next(err);
+    }
+    
+    console.log('Blog upload middleware - success');
+    console.log('Files received:', req.files ? req.files.length : 'none');
+    if (req.files && req.files.length > 0) {
+      req.files.forEach((file, index) => {
+        console.log(`File ${index}:`, {
+          fieldname: file.fieldname,
+          originalname: file.originalname,
+          size: file.size,
+          mimetype: file.mimetype
+        });
+      });
+    }
+    
+    next();
+  });
 };
+
+// Helper function to generate URL from file path based on environment
+const getFileUrl = (file) => {
+  const backendUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://kashishartindia-full-stack.onrender.com' 
+    : 'http://localhost:5000';
+
+  // Debug log all available properties to find Cloudinary URL
+  console.log('getFileUrl DEBUG - file object keys:', Object.keys(file));
+  if (file.path) console.log('- file.path:', file.path);
+  if (file.url) console.log('- file.url:', file.url);
+  if (file.secure_url) console.log('- file.secure_url:', file.secure_url);
+  if (file.filename) console.log('- file.filename:', file.filename);
+  
+  // Check for Cloudinary URLs in various properties
+  const cloudinaryProperties = ['secure_url', 'url', 'path'];
+  
+  for (const prop of cloudinaryProperties) {
+    if (file[prop] && typeof file[prop] === 'string') {
+      // Check if it's a Cloudinary URL
+      if (file[prop].includes('cloudinary.com') || file[prop].includes('res.cloudinary.com')) {
+        console.log(`Using Cloudinary ${prop}: ${file[prop]}`);
+        return file[prop];
+      }
+    }
+  }
+
+  // If file has a URL property from any source, use it
+  if (file.url) {
+    console.log(`Using existing url: ${file.url}`);
+    return file.url;
+  }
+
+  // Fall back to local path
+  if (file.filename) {
+    const localUrl = `${backendUrl}/uploads/${file.filename}`;
+    console.log(`Using constructed local path: ${localUrl}`);
+    return localUrl;
+  }
+  
+  // Last resort fallback
+  console.error('Could not determine file URL - no filename or path available', file);
+  return null;
+};
+
 
 // Multiple files upload - support both named fields (image_0, image_1, etc) and array field (images)
 export const uploadMultiple = (req, res, next) => {
@@ -110,6 +170,8 @@ export const uploadMultiple = (req, res, next) => {
   const uploadFields = upload.fields([
     // Original approach
     { name: 'images', maxCount: 5 },
+    // Blog cover image field
+    { name: 'coverImage', maxCount: 1 },
     // New approach with numbered fields
     ...Array.from({ length: 10 }, (_, i) => ({
       name: `image_${i}`, 

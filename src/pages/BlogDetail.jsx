@@ -172,7 +172,7 @@ const BlogDetail = () => {
                   <div className="relative mx-auto max-w-4xl px-4 sm:px-0 mt-6">
                     <div className="relative w-full h-64 sm:h-[400px] rounded-lg overflow-hidden shadow-md">
                       <img 
-                        src={`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${blog.coverImage}`} 
+                        src={blog.coverImage} 
                         alt={blog.title || 'Blog cover image'}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -267,7 +267,7 @@ const BlogDetail = () => {
                             {relatedBlog.coverImage ? (
                               <div className="relative w-full aspect-video overflow-hidden rounded-t-xl">
                                 <img 
-                                  src={`https://kashishartindia-full-stack.onrender.com/uploads/blogs/${relatedBlog.coverImage}`}
+                                  src={relatedBlog.coverImage}
                                   alt={relatedBlog.title}
                                   className="w-full h-full object-cover object-center absolute inset-0"
                                   onError={(e) => {

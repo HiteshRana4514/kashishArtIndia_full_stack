@@ -1,7 +1,11 @@
+// Load environment variables first, before any other imports
+import dotenv from 'dotenv';
+dotenv.config({ path: './config.env' });
+
+// Now import everything else
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fileUpload from 'express-fileupload';
@@ -15,12 +19,12 @@ import adminRoutes from './routes/admin.js';
 import categoryRoutes from './routes/categories.js';
 import mediaRoutes from './routes/media.js';
 import emailRoutes from './routes/email.js';
+import cloudinaryMediaRoutes from './routes/cloudinaryMedia.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
 
-// Load environment variables
-dotenv.config({ path: './config.env' });
+// Environment variables already loaded at the top
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -107,6 +111,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/media', mediaRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/cloudinary-media', cloudinaryMediaRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
