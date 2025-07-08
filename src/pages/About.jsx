@@ -3,7 +3,7 @@ const About = () => {
     <div className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div 
+        <div
           className="text-center mb-16"
           data-aos="fade-up"
         >
@@ -21,21 +21,18 @@ const About = () => {
             data-aos="fade-right"
           >
             <h2 className="text-3xl font-bold text-gray-800 mb-6">
-              The Artist's Journey
+              Welcome to Kashish Art India Online Gallery – Where Art Finds Its Soul.
             </h2>
             <div className="space-y-4 text-gray-600">
               <p>
-                My journey as an artist began in the vibrant streets of Mumbai, where I was born and raised. From an early age, I was fascinated by the colors, textures, and stories that surrounded me in this diverse city.
+                Kashish Art India is a vibrant online art gallery that embodies the spirit of Indian culture, tradition, and artistic expression. Founded by celebrated artist Aman Chakra, who brings over 38 years of experience in fine arts and curation, the platform is a digital haven for art enthusiasts, collectors, and first-time buyers alike. It offers a carefully curated collection of original artworks that reflect the emotional depth and timeless beauty of Indian art.
               </p>
               <p>
-                Growing up, I spent countless hours observing the world around me - from the golden sunsets over the Arabian Sea to the bustling markets filled with life and energy. These experiences shaped my artistic vision and inspired me to capture the essence of India through my paintings.
-              </p>
-              <p>
-                After completing my formal education in fine arts, I traveled extensively across India, immersing myself in different cultures, traditions, and landscapes. Each journey added new dimensions to my artistic expression and deepened my appreciation for the country's rich heritage.
+                From classical styles like Madhubani, Pichwai, Kalamkari, Warli, and Patachitra to contemporary creations and custom portraits, each piece at Kashish Art India tells a meaningful story. These works capture the essence of India — its spirituality, festivals, rural simplicity, and natural beauty. More than just a gallery, it is a cultural bridge connecting people to the rich and diverse artistic heritage of India.
               </p>
             </div>
           </div>
-          <div 
+          <div
             className="relative"
             data-aos="fade-left"
             data-aos-delay="200"
@@ -52,11 +49,11 @@ const About = () => {
         </div>
 
         {/* Philosophy */}
-        <div 
+        <div
           className="bg-gray-50 rounded-2xl p-12 mb-16"
           data-aos="zoom-in"
         >
-          <div 
+          <div
             className="text-center mb-8"
             data-aos="fade-up"
           >
@@ -67,9 +64,9 @@ const About = () => {
               We believe that art has the power to connect people, transcend boundaries, and tell stories that words cannot express.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div 
+            <div
               className="text-center"
               data-aos="fade-up"
               data-aos-delay="200"
@@ -84,8 +81,8 @@ const About = () => {
                 Every brushstroke is infused with passion and dedication, creating artworks that resonate with emotion and authenticity.
               </p>
             </div>
-            
-            <div 
+
+            <div
               className="text-center"
               data-aos="fade-up"
               data-aos-delay="400"
@@ -100,8 +97,8 @@ const About = () => {
                 We blend traditional techniques with contemporary approaches, creating unique artworks that honor the past while embracing the future.
               </p>
             </div>
-            
-            <div 
+
+            <div
               className="text-center"
               data-aos="fade-up"
               data-aos-delay="600"
@@ -121,7 +118,7 @@ const About = () => {
 
         {/* Inspiration */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-          <div 
+          <div
             className="relative"
             data-aos="fade-right"
             data-aos-delay="200"
@@ -141,41 +138,38 @@ const About = () => {
             data-aos="fade-left"
           >
             <h2 className="text-3xl font-bold text-gray-800 mb-6">
-              Sources of Inspiration
+              Our Objective
             </h2>
             <div className="space-y-4 text-gray-600">
               <p>
-                My inspiration comes from the diverse landscapes and cultures of India - from the snow-capped peaks of the Himalayas to the serene backwaters of Kerala, from the bustling streets of Mumbai to the peaceful villages of Rajasthan.
+                At Kashish Art India, our goal is to revive and showcase the hidden gems of Indian art that remain overlooked in today’s fast-paced world. We aim to give new life and global recognition to traditional and lesser-known art forms that reflect the depth and diversity of India’s cultural heritage.
               </p>
               <p>
-                I'm particularly drawn to the interplay of light and shadow, the vibrant colors of Indian festivals, and the timeless beauty of ancient architecture. Each painting is an attempt to capture not just what I see, but what I feel about these subjects.
-              </p>
-              <p>
-                The rich traditions of Indian art, from Mughal miniatures to contemporary expressions, also influence my work. I believe in honoring these traditions while adding my own contemporary perspective.
+                We believe that true art inspires, uplifts, and connects — going beyond decoration to touch the soul. By bringing together traditional and contemporary art on a single platform, we strive to bridge the gap between artists and art lovers worldwide. Through our exhibitions, collections, and online offerings, we share not just paintings or books, but the spirit and stories of India.
               </p>
             </div>
           </div>
         </div>
 
         {/* Mission */}
-        <div 
+        {/* <div
           className="bg-kashish-blue rounded-2xl p-12 text-white text-center"
           data-aos="zoom-in"
         >
-          <h2 
+          <h2
             className="text-3xl font-bold mb-6"
             data-aos="fade-up"
           >
             Our Mission
           </h2>
-          <p 
+          <p
             className="text-xl mb-8 max-w-3xl mx-auto"
             data-aos="fade-up"
             data-aos-delay="200"
           >
             To create beautiful, meaningful artworks that bring joy to homes around the world while celebrating the rich cultural heritage of India. We strive to make art accessible to everyone who appreciates beauty and creativity.
           </p>
-          <div 
+          <div
             className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
             data-aos="fade-up"
             data-aos-delay="400"
@@ -193,7 +187,7 @@ const About = () => {
               <div className="text-blue-100">Years of Experience</div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

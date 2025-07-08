@@ -12,6 +12,8 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Blog from './pages/Blog'
 import BlogDetail from './pages/BlogDetail'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsConditions from './pages/TermsConditions'
 import WhatsAppButton from './components/WhatsAppButton'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -121,6 +123,32 @@ function App() {
                 <Navbar />
                 <main className="flex-grow">
                   <BlogDetail />
+                </main>
+                <Footer />
+                <WhatsAppButton />
+              </>
+            }
+          />
+          <Route
+            path="/privacy-policy"
+            element={
+              <>
+                <Navbar />
+                <main className="flex-grow">
+                  <PrivacyPolicy />
+                </main>
+                <Footer />
+                <WhatsAppButton />
+              </>
+            }
+          />
+          <Route
+            path="/terms-conditions"
+            element={
+              <>
+                <Navbar />
+                <main className="flex-grow">
+                  <TermsConditions />
                 </main>
                 <Footer />
                 <WhatsAppButton />

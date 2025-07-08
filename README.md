@@ -272,7 +272,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 For support or questions, please contact:
 - Email: info@kashishartindia.com
-- Phone: +91 98765 43210
+- Phone: +91 9835117590
 
 ## 📊 Project Status
 

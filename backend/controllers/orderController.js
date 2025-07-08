@@ -159,7 +159,7 @@ export const createOrder = asyncHandler(async (req, res) => {
               </p>
             ` : ''}
             
-            <p>Please <a href="http://localhost:3000/admin/orders" style="color: #b45309;">log in to the admin panel</a> to manage this order.</p>
+            <p>Please <a href="http://kashishartindia.com/admin/orders" style="color: #b45309;">log in to the admin panel</a> to manage this order.</p>
           </div>
         `
       });

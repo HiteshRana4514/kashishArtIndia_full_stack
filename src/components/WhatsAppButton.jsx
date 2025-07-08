@@ -5,7 +5,7 @@ const WhatsAppButton = () => {
 
   const handleWhatsAppClick = () => {
     // WhatsApp business number - you can change this to your actual number
-    const phoneNumber = '8529897856' // Replace with your actual WhatsApp number
+    const phoneNumber = '9835117590' // Replace with your actual WhatsApp number
     const message = encodeURIComponent('Hi! I\'m interested in your artwork. Can you help me?')
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
     

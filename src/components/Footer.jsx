@@ -54,13 +54,17 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <div className="space-y-2 text-gray-300">
               <p>Email: info@kashishartindia.com</p>
-              <p>Phone: +91 98765 43210</p>
-              <p>Address: Mumbai, India</p>
+              <p>Phone: +91 9835117590</p>
+              <p>Address: G 101 Rajhans Residency, Sector 1, Greater Noida (W), 201306, India</p>
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+          <div className="mb-4 flex justify-center space-x-6">
+            <a href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors text-sm">Privacy Policy</a>
+            <a href="/terms-conditions" className="text-gray-400 hover:text-white transition-colors text-sm">Terms & Conditions</a>
+          </div>
           <p className="text-gray-400">
             © {new Date().getFullYear()} Kashish Art India. All rights reserved.
           </p>

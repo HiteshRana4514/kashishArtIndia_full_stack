@@ -248,8 +248,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-1">Email</h3>
-                  <p className="text-gray-600">info@kashishartindia.com</p>
-                  <p className="text-gray-600">sales@kashishartindia.com</p>
+                  <a className="text-gray-600" href="mailto:info@kashishartindia.com">info@kashishartindia.com</a>
                 </div>
               </div>
 
@@ -265,8 +264,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-1">Phone</h3>
-                  <p className="text-gray-600">+91 98765 43210</p>
-                  <p className="text-gray-600">+91 98765 43211</p>
+                  <p className="text-gray-600">+91 9835117590</p>
+                  {/* <p className="text-gray-600">+91 98765 43211</p> */}
                 </div>
               </div>
 
@@ -284,9 +283,7 @@ const Contact = () => {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-1">Address</h3>
                   <p className="text-gray-600">
-                    Kashish Art Studio<br />
-                    123 Art Street, Colaba<br />
-                    Mumbai, Maharashtra 400001<br />
+                  G 101 Rajhans Residency<br></br> Sector 1, Greater Noida (W) <br></br> 201306, 
                     India
                   </p>
                 </div>
@@ -354,7 +351,7 @@ const Contact = () => {
               Find Our Studio
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Visit us at our art studio in the heart of Mumbai. We're located in the vibrant Colaba area, easily accessible by public transport.
+              Visit us at our art studio in  Noida. We're located in the vibrant Rajhans Residency, easily accessible by public transport.
             </p>
           </div>
 
@@ -364,32 +361,22 @@ const Contact = () => {
             data-aos-delay="200"
           >
             <div className="relative h-96 md:h-[500px]">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.5!2d72.8311!3d18.9217!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7d1c06c0d1d1f%3A0x1b0b0b0b0b0b0b0b!2sColaba%2C%20Mumbai%2C%20Maharashtra%2C%20India!5e0!3m2!1sen!2sin!4v1234567890"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Kashish Art Studio Location"
-                className="w-full h-full"
-              ></iframe>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3503.9254753989253!2d77.4417385338684!3d28.57200049974361!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ceec0ffc458bf%3A0xd368779c7b6a7ca4!2sRajhans%20Residency%2C%20Noida%20Extension!5e0!3m2!1sen!2sin!4v1751953021001!5m2!1sen!2sin" width="100%" height="100%" style={{border:0}} allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Kashish Art Studio Location" className="w-full h-full"></iframe>
               
               {/* Map Overlay with Studio Info */}
-              <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-xs">
+              <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 max-w-xs">
                 <div className="flex items-center space-x-3 mb-3">
                   <div className="w-8 h-8 bg-kashish-blue rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-sm">K</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Kashish Art Studio</h3>
+                    <h3 className="font-semibold text-gray-800">Kashish Art India</h3>
                     <p className="text-sm text-gray-600">Art Gallery & Studio</p>
                   </div>
                 </div>
                 <div className="space-y-1 text-sm text-gray-600">
-                  <p>📍 123 Art Street, Colaba</p>
-                  <p>📞 +91 98765 43210</p>
+                  <p>📍 G 101 Rajhans Residency, Sector 1, Greater Noida (W), 201306</p>
+                  <p>📞 +91 9835117590</p>
                   <p>🕒 Mon-Fri: 9AM-6PM</p>
                 </div>
               </div>
@@ -397,7 +384,7 @@ const Contact = () => {
           </div>
 
           {/* Directions */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div 
               className="bg-white p-6 rounded-xl shadow-sm card-hover text-center"
               data-aos="fade-up"
@@ -439,7 +426,7 @@ const Contact = () => {
               <h3 className="text-lg font-semibold text-gray-800 mb-2">By Car</h3>
               <p className="text-gray-600">Parking available at nearby Colaba Parking Complex</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
