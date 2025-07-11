@@ -37,9 +37,7 @@ const OrdersContent = () => {
           return;
         }
         
-        console.log('Fetching orders with token:', token ? 'Token exists' : 'No token');
         const response = await apiRequest('/orders', 'GET', null, token);
-        console.log('Orders API response:', response);
         
         let ordersData = [];
         if (Array.isArray(response)) {
@@ -54,7 +52,6 @@ const OrdersContent = () => {
         
         // Process orders data to ensure painting details are complete
         const processedOrders = ordersData.map(order => {
-          console.log('Processing order:', order);
           // Ensure paintingDetails exists and has expected properties
           if (!order.paintingDetails) {
             order.paintingDetails = {};
@@ -150,7 +147,6 @@ const OrdersContent = () => {
   const OrderDetailsModal = () => {
     if (!selectedOrder) return null;
     
-    console.log('Selected order for modal:', selectedOrder);
     
     // Format the painting details with fallbacks
     const paintingDetails = selectedOrder.paintingDetails || {};

@@ -353,7 +353,6 @@ const CategoriesContent = () => {
         <MediaGalleryModal
           onClose={() => setShowMediaGallery(false)}
           onSelect={(mediaItem) => {
-            console.log('Selected image from gallery:', mediaItem);
             
             // Process URL to ensure proper format
             let imageUrl = mediaItem.url;
@@ -364,7 +363,6 @@ const CategoriesContent = () => {
               imageUrl = `${backendUrl}${imageUrl}`;
             }
             
-            console.log('Processed image URL:', imageUrl);
             setForm({ ...form, image: imageUrl });
             setShowMediaGallery(false);
             toast.success('Image selected from gallery');

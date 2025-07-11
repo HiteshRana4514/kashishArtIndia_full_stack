@@ -66,7 +66,7 @@ const AdminLogin = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.2, type: 'spring' }}
         >
-          <img src="/logo.jpeg" alt="Kashish Art India Logo" className="h-20 w-auto object-contain" />
+          <img src="/logo.jpg" alt="Kashish Art India Logo" className="h-20 w-auto object-contain" />
         </motion.div>
         <h2 className="text-2xl font-bold text-center text-orange-600 mb-2">Admin Login</h2>
         <div className="relative">

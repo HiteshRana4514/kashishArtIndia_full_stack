@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://kashishartindia.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://kashishartindia.com/products</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://kashishartindia.com/about</loc>
+  </url>
+  <url>
+    <loc>https://kashishartindia.com/contact</loc>
+  </url>
+  <url>
+    <loc>https://kashishartindia.com/blog</loc>
+  </url>
+</urlset>

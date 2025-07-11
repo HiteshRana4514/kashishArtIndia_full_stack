@@ -66,7 +66,7 @@ const AdminDashboard = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
-            <img src="/logo.jpeg" alt="Kashish Art India Logo" className="h-10 w-auto object-contain" />
+            <img src="/logo.jpg" alt="Kashish Art India Logo" className="h-10 w-auto object-contain" />
             <h1 className="text-xl font-bold text-gray-800">Admin Dashboard</h1>
           </div>
           <button
@@ -139,7 +139,6 @@ const DashboardContent = () => {
         
         // Fetch paintings data
         const paintingsRes = await apiRequest('/paintings', 'GET', null, token);
-        console.log('Paintings API response:', paintingsRes);
         
         // Handle different response formats
         let paintings = [];
@@ -151,7 +150,6 @@ const DashboardContent = () => {
         
         // Fetch categories data
         const categoriesRes = await apiRequest('/categories', 'GET', null, token);
-        console.log('Categories API response:', categoriesRes);
         
         let categories = [];
         if (categoriesRes && categoriesRes.categories) {
@@ -170,7 +168,6 @@ const DashboardContent = () => {
             ordersCount = ordersRes.length;
           }
         } catch (orderErr) {
-          console.log('Orders API not available, using dummy data', orderErr);
           // Fallback to dummy data if orders API is not yet implemented
           ordersCount = 8;
         }
@@ -183,12 +180,7 @@ const DashboardContent = () => {
           .sort((a, b) => new Date(b.createdAt || Date.now()) - new Date(a.createdAt || Date.now()))
           .slice(0, 5);
         
-        console.log('Setting dashboard stats:', { 
-          paintingsCount: paintings.length,
-          categoriesCount: categories.length,
-          ordersCount,
-          inStockCount
-        });
+        
         
         setStats({
           paintingsCount: paintings.length,

@@ -19,11 +19,9 @@ const Blog = () => {
       try {
         setLoading(true);
         // Try direct fetch first to debug
-        console.log('Fetching blogs directly...');
         try {
           const response = await fetch('https://kashishartindia-full-stack.onrender.com/api/blogs');
           const data = await response.json();
-          console.log('Direct API fetch response:', data);
           
           if (data && data.data && Array.isArray(data.data)) {
             // Find a featured blog (newest blog with cover image)
@@ -31,7 +29,6 @@ const Blog = () => {
               (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
             );
             
-            console.log('Sorted blogs:', sortedBlogs);
             
             const withImages = sortedBlogs.filter(blog => blog.coverImage);
             
@@ -56,7 +53,6 @@ const Blog = () => {
         
         // Fall back to apiRequest
         const response = await apiRequest('/blogs', 'GET');
-        console.log('Blog API response from utility:', response);
         
         if (response.success && response.data) {
           // Find a featured blog (newest blog with cover image)
@@ -93,11 +89,9 @@ const Blog = () => {
         const response = await apiRequest('/blogs/tags', 'GET');
         // If that fails, try with the full path
         if (!response.success) {
-          console.log('Trying alternative tags API path...');
           try {
             const altResponse = await fetch('https://kashishartindia-full-stack.onrender.com/api/blogs/tags');
             const data = await altResponse.json();
-            console.log('Direct tags API fetch response:', data);
             
             if (data && data.success && Array.isArray(data.data)) {
               setTags(data.data);
@@ -342,7 +336,7 @@ const Blog = () => {
                           <span>{formatDate(blog.createdAt)}</span>
                         </div>
                         
-                        <Link to={`/blog/${blog.slug}`} className="group">
+                        <Link to={`/blog/${encodeURIComponent(blog.slug)}`} className="group">
                           <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-kashish-blue transition-colors">
                             {blog.title || 'Untitled Blog Post'}
                           </h3>
@@ -353,7 +347,7 @@ const Blog = () => {
                         </p>
                         
                         <Link 
-                          to={`/blog/${blog.slug}`}
+                          to={`/blog/${encodeURIComponent(blog.slug)}`}
                           className="text-kashish-blue font-medium hover:text-blue-700 transition-colors flex items-center mt-2"
                         >
                           Read More

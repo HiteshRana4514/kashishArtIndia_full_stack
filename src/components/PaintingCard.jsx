@@ -24,33 +24,27 @@ const PaintingCard = ({ painting, onBuyNow }) => {
     if (!url) return '';
     
     // For debugging
-    console.log('Transforming URL:', url);
     
     // If it's already a full Cloudinary URL, use it as is
     if (url.startsWith('http') && url.includes('cloudinary.com')) {
-      console.log('URL is already a Cloudinary URL');
       return url;
     }
     
     // If it's any other complete HTTP URL, use as is
     if (url.startsWith('http')) {
-      console.log('URL is already a complete URL');
       return url;
     }
     
     // Handle Cloudinary partial URLs (v1234/folder/file)
     if (url.includes('kashish_art_india/')) {
-      console.log('URL contains Cloudinary path pattern');
       return `https://res.cloudinary.com/dhshyzyak/image/upload/${url}`;
     }
     
     // For production backend URLs that include uploads/
     if (url.includes('/uploads/')) {
-      console.log('Found /uploads/ URL in production');
       // In production, convert backend URLs to Cloudinary
       if (window.location.hostname !== 'localhost') {
         const fileName = url.split('/uploads/').pop();
-        console.log('Extracted filename:', fileName);
         return `https://res.cloudinary.com/dhshyzyak/image/upload/v1/kashish_art_india/${fileName}`;
       }
       return url; // For development, keep as is
@@ -58,11 +52,9 @@ const PaintingCard = ({ painting, onBuyNow }) => {
     
     // For paths that START with uploads/ without leading slash
     if (url.startsWith('uploads/')) {
-      console.log('URL starts with uploads/');
       // In production, rewrite to Cloudinary format
       if (window.location.hostname !== 'localhost') {
         const fileName = url.split('uploads/').pop();
-        console.log('Extracted filename:', fileName);
         return `https://res.cloudinary.com/dhshyzyak/image/upload/v1/kashish_art_india/${fileName}`;
       } else {
         // In local development, keep as is but ensure proper path
@@ -71,7 +63,6 @@ const PaintingCard = ({ painting, onBuyNow }) => {
     }
     
     // Default case - return as is
-    console.log('Using URL as is');
     return url;
   };
   
@@ -79,8 +70,6 @@ const PaintingCard = ({ painting, onBuyNow }) => {
   imageUrl = transformImageUrl(imageUrl);
   
   // For debugging
-  console.log('Transformed imageUrl:', imageUrl);
-  console.log('Original painting data:', painting);
   
   const handleCardClick = (e) => {
     // Prevent navigation if clicking the Buy Now button

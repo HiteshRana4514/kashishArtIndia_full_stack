@@ -51,7 +51,6 @@ const BuyModal = ({ isOpen, onClose, painting }) => {
     
     try {
       // Log the painting object to help with debugging
-      console.log('Painting data being submitted:', painting);
       
       // Create order with detailed painting and customer information
       const orderData = {
@@ -77,10 +76,8 @@ const BuyModal = ({ isOpen, onClose, painting }) => {
       };
       
       // Log the complete order data being sent
-      console.log('Order data being submitted:', orderData);
       
       const response = await apiRequest('/orders', 'POST', orderData);
-      console.log('Order created:', response);
       
       setSuccess(true);
       setTimeout(() => {

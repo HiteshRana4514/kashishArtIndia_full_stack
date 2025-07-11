@@ -166,11 +166,9 @@ const PaintingsContent = () => {
       // Check if we have too many or too large images
       const newImageFiles = form.images.filter(img => typeof img !== 'string');
       if (newImageFiles.length > 0) {
-        console.log(`Uploading ${newImageFiles.length} new images`);
         // Check total size
         const totalSize = newImageFiles.reduce((sum, file) => sum + (file.size || 0), 0);
         const totalSizeMB = totalSize / (1024 * 1024);
-        console.log(`Total upload size: ${totalSizeMB.toFixed(2)} MB`);
         
         // Warn if files might be too large
         if (totalSizeMB > 8) {
@@ -218,7 +216,6 @@ const PaintingsContent = () => {
           try {
             // Try to compress the image if it's too large (> 2MB)
             if (img.size > 2 * 1024 * 1024 && img.type.startsWith('image/')) {
-              console.log(`Image ${img.name} is large (${(img.size / (1024 * 1024)).toFixed(2)} MB). Consider optimizing.`);
             }
             
             // Use a numbered field name to ensure uniqueness
@@ -237,10 +234,8 @@ const PaintingsContent = () => {
       let res;
       try {
         if (editId) {
-          console.log(`Updating painting ${editId} with ${fileCount} new files`);
           res = await apiRequestMultipart(`/paintings/${editId}`, 'PUT', formData, token);
         } else {
-          console.log(`Creating new painting with ${fileCount} files`);
           res = await apiRequestMultipart('/paintings', 'POST', formData, token);
         }
         
@@ -675,7 +670,6 @@ const PaintingsContent = () => {
               ? selectedMedia.map(item => processUrl(item.url))
               : [processUrl(selectedMedia.url)];
               
-            console.log('Selected images:', newImages);
               
             setForm(f => ({
               ...f,

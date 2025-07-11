@@ -19,12 +19,12 @@ const Navbar = () => {
         <div className="flex justify-between h-20 items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center">
               <img
-                src="/logo.jpeg"
+                src="/logo.jpg"
                 alt="Kashish Art India Logo"
-                className="h-14 max-h-16 w-auto object-contain rounded-lg shadow bg-white p-1"
-                style={{ maxWidth: '60px', minWidth: '32px' }}
+                className="h-[65px] w-[120px]"
+                style={{ maxWidth: '120px', minWidth: '60px' }}
               />
               {/* <span className="text-xl font-bold text-gray-800">Kashish Art India</span> */}
             </Link>

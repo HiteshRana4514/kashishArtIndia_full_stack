@@ -90,11 +90,11 @@ blogPostSchema.pre('save', function(next) {
     return next();
   }
   
-  this.slug = this.title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-  
+  this.slug = encodeURIComponent(
+    this.title
+      .trim()
+      .replace(/\s+/g, '-') // replace spaces with dashes
+  );
   next();
 });
 

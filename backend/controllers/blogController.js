@@ -105,12 +105,11 @@ export const createBlog = async (req, res) => {
     // Generate slug from title (with validation to prevent errors)
     let slug = '';
     if (title) {
-      slug = title
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/[\s_-]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+      slug = encodeURIComponent(
+        title
+          .trim()
+          .replace(/\s+/g, '-') // replace spaces with dashes
+      );
     } else {
       // If title is missing, generate a fallback slug
       slug = 'blog-' + Date.now();
@@ -335,9 +334,10 @@ export const getBlogById = async (req, res) => {
 // @desc    Get single blog post by slug
 // @route   GET /api/blogs/slug/:slug
 // @access  Public/Private (depends on publish status)
-export const getBlogBySlug = async (req, res) => {
+export const getBlogBySlug = async (req, res) => {  
   try {
-    const blog = await Blog.findOne({ slug: req.params.slug })
+    const decodedSlug = encodeURIComponent(req.params.slug);
+    const blog = await Blog.findOne({ slug: decodedSlug })
       .populate('author', 'name email');
     
     if (!blog) {
@@ -447,12 +447,11 @@ export const updateBlog = async (req, res) => {
     if (title) {
       blog.title = title;
       // Generate new slug from title if title changes
-      blog.slug = title
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/[\s_-]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+      blog.slug = encodeURIComponent(
+        title
+          .trim()
+          .replace(/\s+/g, '-') // replace spaces with dashes
+      );
     } else if (title === '') {
       // If title is explicitly set to empty string
       console.warn('Blog updated with empty title, keeping original slug');
@@ -461,6 +460,7 @@ export const updateBlog = async (req, res) => {
         blog.slug = 'blog-' + Date.now();
       }
     }
+    
     
     // Update cover image if we found a new one
     if (newCoverImage) {

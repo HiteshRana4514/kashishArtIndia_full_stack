@@ -82,7 +82,6 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
   
   // Handle image selection from Media Gallery
   const handleMediaSelect = (media) => {
-    console.log('Selected media from gallery:', media);
     // Store the Cloudinary URL
     setImagePreview(media.url);
     setCoverImage(media.url); // Store URL instead of file
@@ -124,11 +123,9 @@ const BlogEditorModal = ({ blog, onClose, onSave }) => {
         if (isCloudinaryImage) {
           // For Cloudinary images, just send the URL as a string
           formData.append('cloudinaryCoverImage', coverImage);
-          console.log('Sending Cloudinary URL:', coverImage);
         } else {
           // For new file uploads, send the actual file
           formData.append('coverImage', coverImage);
-          console.log('Sending file upload');
         }
       }
       

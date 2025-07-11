@@ -51,7 +51,6 @@ const Home = () => {
         setPaintingsLoading(true);
         const response = await apiRequest('/paintings', 'GET');
         const paintingsData = response.paintings || response;
-        console.log('paintingsData', paintingsData);
         
         // Only get paintings that are both available AND featured
         const featuredPaintings = paintingsData.filter(painting => 
@@ -81,11 +80,9 @@ const Home = () => {
     const fetchRecentBlogs = async () => {
       try {
         setBlogsLoading(true);
-        console.log('Fetching blogs from API...');
         
         // Get all blogs and sort them by date
         const response = await apiRequest('/blogs', 'GET');
-        console.log('Blog API response:', response);
         
         // Check response structure and extract blogs
         let blogs = [];
@@ -93,23 +90,18 @@ const Home = () => {
         // The blog API returns different structures, handle all possible cases
         if (response && response.data && Array.isArray(response.data)) {
           blogs = response.data; // Standard API response structure
-          console.log('Found blogs in response.data');
         } else if (response && response.blogs && Array.isArray(response.blogs)) {
           blogs = response.blogs;
-          console.log('Found blogs in response.blogs');
         } else if (Array.isArray(response)) {
           blogs = response;
-          console.log('Found blogs in array response');
         }
         
-        console.log('Extracted blogs:', blogs);
         
         // Sort by createdAt date (newest first)
         blogs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         
         // Get only the 3 most recent blogs
         const recentBlogsData = blogs.slice(0, 3);
-        console.log('Recent blogs (3):', recentBlogsData);
         setRecentBlogs(recentBlogsData);
       } catch (error) {
         console.error('Error fetching recent blogs:', error);

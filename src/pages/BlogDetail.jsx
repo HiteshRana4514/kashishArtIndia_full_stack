@@ -15,15 +15,14 @@ const BlogDetail = () => {
   
   useEffect(() => {
     const fetchBlog = async () => {
+      const encodedSlug = encodeURIComponent(slug)
       try {
         setLoading(true);
         
         // Try direct fetch first
         try {
-          console.log('Fetching blog directly using slug:', slug);
-          const response = await fetch(`http://localhost:5000/api/blogs/slug/${slug}`);
+          const response = await fetch(`http://localhost:5000/api/blogs/slug/${encodedSlug}`);
           const data = await response.json();
-          console.log('Direct blog fetch response:', data);
           
           if (data && data.success && data.data) {
             setBlog(data.data);
@@ -41,8 +40,7 @@ const BlogDetail = () => {
         }
         
         // Fall back to apiRequest
-        const response = await apiRequest(`/blogs/slug/${slug}`, 'GET');
-        console.log('Blog API response from utility:', response);
+        const response = await apiRequest(`/blogs/slug/${encodedSlug}`, 'GET');
         
         if (response.success) {
           setBlog(response.data);

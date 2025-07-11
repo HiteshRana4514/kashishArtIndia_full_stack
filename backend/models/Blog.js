@@ -58,12 +58,11 @@ const BlogSchema = new mongoose.Schema({
 // Create slug from title
 BlogSchema.pre('save', function(next) {
   if (this.isModified('title')) {
-    this.slug = this.title
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    this.slug = encodeURIComponent(
+      this.title
+        .trim()
+        .replace(/\s+/g, '-') // replace spaces with dashes
+    );
   }
   
   // Calculate approximate read time based on content length
